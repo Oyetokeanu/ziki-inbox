@@ -39,7 +39,7 @@ h1{margin:0;font-size:28px}
 .pill{background:var(--blue);border-radius:999px;padding:0 10px;font-size:13px;font-weight:700;margin-left:8px}
 .sum{margin:0 0 14px}
 .agents{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-.ag{background:#0d1a3b;border:1px solid var(--line);border-radius:14px;padding:10px 14px;flex:1;min-width:230px}
+.ag{background:#0d1a3b;border:1px solid var(--line);border-radius:14px;padding:8px 14px;flex:1;min-width:150px}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:7px}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .card{background:#0d1a3b;border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:14px;padding:14px}
@@ -90,9 +90,9 @@ td{padding:14px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
   <div class="ph"><h2 id="dh">Needs your decision<span class="pill" id="count">0</span></h2><button class="btn" onclick="reset()">Restart demo</button></div>
   <p class="sum" id="sum" aria-live="polite"></p>
   <div class="agents">
-   <div class="ag"><span class="dot"></span><b>Triage Agent</b><div class="sm">Can <em>label and comment</em>. Asks before <em>closing</em>.</div></div>
-   <div class="ag"><span class="dot"></span><b>Docs Agent</b><div class="sm">Can <em>comment and open PRs</em>. Asks before <em>merging</em>.</div></div>
-   <div class="ag"><span class="dot"></span><b>Design Agent</b><div class="sm">Can <em>draft designs</em>. Asks before <em>publishing</em>.</div></div>
+   <div class="ag"><span class="dot"></span><b>Triage Agent</b><div class="sm">Asks before <em>closing</em></div></div>
+   <div class="ag"><span class="dot"></span><b>Docs Agent</b><div class="sm">Asks before <em>merging</em></div></div>
+   <div class="ag"><span class="dot"></span><b>Design Agent</b><div class="sm">Asks before <em>publishing</em></div></div>
   </div>
   <div class="cards" id="cards"></div>
  </section>
@@ -110,9 +110,9 @@ td{padding:14px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
 
 <script>
 const demo=[
-{id:1,agent:"Triage Agent",title:"Issue #41 looks like a duplicate of #17",rec:"Both describe the locked announcement bar. I suggest closing #41 and linking it to #17.",why:"The two issues have the same steps and the same screenshot. #17 is older and has more detail.",yes:"Approve",no:"Reject"},
-{id:2,agent:"Docs Agent",title:"Fix: “1 replies” should read “1 reply”",rec:"I changed the thread footer to handle the singular. I suggest merging.",why:"The text comes from one line in the thread footer. The fix passed all 14 tests and changes no other screens.",yes:"Approve",no:"Reject"},
-{id:3,agent:"Design Agent",title:"Show agent progress on the issue page",rec:"I drafted a one-line progress strip. Does this layout work for you?",why:"I drafted three layouts and picked the one-line strip because it takes the least space on phones.",yes:"Looks good",no:"Needs changes"}
+{id:1,agent:"Triage Agent",title:"Close #41 as a duplicate?",rec:"Same bug as #17.",why:"Same steps and screenshot as #17, which is older.",yes:"Approve",no:"Reject"},
+{id:2,agent:"Docs Agent",title:"Merge “1 reply” fix?",rec:"Tests passed.",why:"One-line change. All 14 tests passed.",yes:"Approve",no:"Reject"},
+{id:3,agent:"Design Agent",title:"Use this progress strip?",rec:"Needs your look.",why:"Picked the smallest of three layouts.",yes:"Looks good",no:"Changes"}
 ];
 let items=[],ap=0,rj=0;
 const $=id=>document.getElementById(id);
@@ -122,12 +122,12 @@ function decide(id,y){const it=items.find(x=>x.id===id);items=items.filter(x=>x.
 function render(){
  const n=items.length;
  $("count").textContent=n;$("navc").textContent=n;
- $("sum").innerHTML=`<b>Your agents handled ${22+ap+rj} things today.</b> <span class="mute">${n?`${n} ${n==1?"needs":"need"} your decision. The rest is done.`:"Nothing needs you right now."}</span>`;
+ $("sum").innerHTML=`<b>${n?n+" need you.":"Nothing needs you."}</b> <span class="mute">${22+ap+rj} handled by agents today.</span>`;
  $("cards").innerHTML=n?items.map(i=>`
   <article class="card" id="c${i.id}"><div class="sm">${i.agent}</div><h3>${i.title}</h3><p>${i.rec}</p>
   <div class="btns"><button class="btn ok" onclick="decide(${i.id},true)">${i.yes}</button><button class="btn no" onclick="decide(${i.id},false)">${i.no}</button><button class="btn" aria-expanded="false" onclick="toggle(${i.id})">Ask why</button></div>
   <div class="why">${i.why}</div></article>`).join("")
- :`<div class="empty"><b>You’re all caught up.</b><div class="mute">${ap} approved, ${rj} rejected. Agents will come back when they need you.</div></div>`;
+ :`<div class="empty"><b>All caught up.</b><div class="mute">${ap} approved, ${rj} rejected.</div></div>`;
 }
 reset();
 </script>
